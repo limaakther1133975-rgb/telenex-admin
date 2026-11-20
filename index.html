@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="robots" content="noindex, nofollow"/>
+<title>Telecom Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{--p:#e5126f;--p2:#ff4d94;--bg:#f4f5fa;--card:#ffffff;--text:#1d1f2b;--muted:#7b8094;--line:#eceef5;--ok:#16a34a;--warn:#f59e0b;--bad:#ef4444;--sh:0 8px 30px rgba(30,30,60,.08);--r:18px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:'Hind Siliguri','Poppins',system-ui,sans-serif;background:#dfe2ee;color:var(--text);font-size:15px}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:14.5px;color:var(--text)}
+.mono{font-family:'Poppins',sans-serif}
+#app{max-width:540px;min-height:100vh;margin:0 auto;background:var(--bg);position:relative;box-shadow:0 0 60px rgba(0,0,0,.12);padding-bottom:84px}
+.top{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:40;box-shadow:0 4px 16px rgba(229,18,111,.25)}
+.top h1{margin:0;font-size:18px;font-weight:700}
+.badge-pill{background:rgba(255,255,255,.2);padding:4px 12px;border-radius:99px;font-size:12px;font-weight:600}
+.pad{padding:14px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);border:1px solid var(--line);padding:14px;margin-bottom:12px}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:14px}
+.stat{background:var(--card);border-radius:16px;padding:14px;border:1px solid var(--line);box-shadow:var(--sh)}
+.stat b{display:block;font-family:'Poppins',sans-serif;font-size:22px;color:var(--p)}
+.stat span{font-size:13px;color:var(--muted);font-weight:600}
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(100%,540px);background:var(--card);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding:8px 2px 10px;z-index:50;box-shadow:0 -8px 25px rgba(0,0,0,.06)}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:11px;color:var(--muted);font-weight:600;position:relative}
+.nav button.on{color:var(--p)}
+.nav button .dot{position:absolute;top:-2px;right:22%;background:var(--bad);color:#fff;font-size:10px;padding:1px 5px;border-radius:99px;font-family:'Poppins',sans-serif}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;margin-bottom:10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-size:13px;font-weight:600;white-space:nowrap}
+.tab.on{background:var(--p);color:#fff;border-color:var(--p)}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11.5px;font-weight:600}
+.tag.pending{background:#fef3c7;color:#b45309}
+.tag.done{background:#dcfce7;color:#15803d}
+.tag.rejected{background:#fee2e2;color:#b91c1c}
+.btns{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.btn{padding:10px 14px;border-radius:12px;font-weight:700;font-size:13.5px;color:#fff;background:var(--p);display:inline-flex;align-items:center;justify-content:center;gap:5px}
+.btn.ok{background:var(--ok)}
+.btn.bad{background:var(--bad)}
+.btn.ghost{background:var(--bg);color:var(--text);border:1px solid var(--line)}
+.btn.full{width:100%;padding:13px;font-size:15px}
+.field{margin-bottom:11px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-bottom:4px}
+.inp{width:100%;padding:11px 13px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);outline:none}
+.inp:focus{border-color:var(--p)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.auth-box{max-width:420px;margin:40px auto;padding:24px 18px}
+.ov{position:fixed;inset:0;background:rgba(10,12,25,.55);z-index:100;display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(2px)}
+.sheet{background:var(--card);width:min(100%,540px);border-radius:24px 24px 0 0;padding:16px 18px 26px;max-height:90vh;overflow:auto}
+.toast{position:fixed;left:50%;bottom:88px;transform:translateX(-50%);background:#171a26;color:#fff;padding:10px 18px;border-radius:99px;z-index:200;font-size:13.5px;font-weight:600;box-shadow:0 10px 25px rgba(0,0,0,.3);max-width:90%;text-align:center}
+.toast.ok{background:var(--ok)}.toast.err{background:var(--bad)}
+.sw-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}
+.sw-row:last-child{border:0}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
+import { getFirestore, doc, collection, onSnapshot, setDoc, updateDoc, deleteDoc, addDoc, writeBatch, serverTimestamp, increment } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+
+/* ============ ১) এখানে আপনার সেই একই Firebase কনফিগ বসান ============ */
+const FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyC4EorOO25jtTkqek99cMP62jA6n_olBLI',
+  authDomain: 'telenex-bd.firebaseapp.com',
+  projectId: 'telenex-bd',
+  storageBucket: 'telenex-bd.firebasestorage.app',
+  messagingSenderId: '18331974211',
+  appId: '1:18331974211:web:83b51dd85408f93fd5b2f6',
+  measurementId: 'G-PEHWS00JR5'
+};
+
+/* ============ ২) অ্যাডমিন ইমেইল সেট করুন (Firebase Auth-এ তৈরি করা) ============ */
+const ADMIN_EMAIL = 'admin@tel.app';
+/* ========================================================================== */
+
+const isConfigured = !String(FIREBASE_CONFIG.apiKey).startsWith('YOUR_');
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const tk = n => '৳' + (Number(n) || 0).toLocaleString('en-US', { maximumFractionDigits: 2 });
+const tsMs = ts => (ts && ts.toMillis ? ts.toMillis() : (ts ? +new Date(ts) : Date.now()));
+const fmtDate = ts => { const d = ts && ts.toDate ? ts.toDate() : new Date(ts || Date.now()); return d.toLocaleString('bn-BD', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }); };
+
+function toast(msg, type = '') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+function copyText(t) {
+  navigator.clipboard?.writeText(t).then(() => toast('কপি হয়েছে: ' + t, 'ok')).catch(() => toast(t));
+}
+function openSheet(html) {
+  const o = document.createElement('div');
+  o.className = 'ov';
+  o.innerHTML = `<div class="sheet">${html}</div>`;
+  const close = () => o.remove();
+  o.addEventListener('click', e => { if (e.target === o || e.target.closest('[data-close]')) close(); });
+  document.body.appendChild(o);
+  return { el: o, close };
+}
+
+const S = {
+  user: null, ready: false, tab: 'dash',
+  orderFilter: 'pending', depFilter: 'pending', userSearch: '',
+  cfg: {}, ops: [], offers: [], banners: [], camps: [],
+  orders: [], deposits: [], users: []
+};
+window.S = S;
+
+let app, auth, db;
+if (isConfigured) {
+  app = initializeApp(FIREBASE_CONFIG);
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
+
+function listenAll() {
+  const sub = (col, key, sortFn) => onSnapshot(collection(db, col), s => {
+    S[key] = s.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (sortFn) S[key].sort(sortFn);
+    render();
+  }, e => console.warn(col, e.message));
+
+  onSnapshot(doc(db, 'settings', 'app'), s => { S.cfg = s.exists() ? s.data() : {}; render(); });
+  sub('orders', 'orders', (a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+  sub('deposits', 'deposits', (a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+  sub('users', 'users', (a, b) => tsMs(b.createdAt) - tsMs(a.createdAt));
+  sub('operators', 'ops', (a, b) => (a.order || 0) - (b.order || 0));
+  sub('offers', 'offers', (a, b) => (a.order || 0) - (b.order || 0));
+  sub('banners', 'banners', (a, b) => (a.order || 0) - (b.order || 0));
+  sub('campaigns', 'camps');
+}
+
+/* ---------- Actions ---------- */
+async function approveDeposit(id) {
+  const d = S.deposits.find(x => x.id === id);
+  if (!d || d.status !== 'pending') return;
+  const u = S.users.find(x => x.id === d.uid);
+  if (!u) return toast('ইউজার পাওয়া যায়নি', 'err');
+
+  let bonus = 0;
+  const now = Date.now();
+  S.camps.filter(c => c.type === 'deposit' && c.active !== false).forEach(c => {
+    if (c.startAt && Date.parse(c.startAt) > now) return;
+    if (c.endAt && Date.parse(c.endAt) < now) return;
+    if (c.minAmount && d.amount < Number(c.minAmount)) return;
+    if (c.method && c.method !== 'any' && c.method !== d.method) return;
+    let b = c.valueType === 'fixed' ? Number(c.value) : Math.floor(d.amount * Number(c.value) / 100);
+    if (c.maxBonus) b = Math.min(b, Number(c.maxBonus));
+    if (b > bonus) bonus = b;
+  });
+
+  const b = writeBatch(db);
+  b.update(doc(db, 'deposits', id), { status: 'done', approvedAt: serverTimestamp() });
+  b.update(doc(db, 'users', d.uid), {
+    balance: increment(Number(d.amount)),
+    ...(bonus > 0 ? { bonus: increment(bonus) } : {})
+  });
+  if (bonus > 0) {
+    b.set(doc(collection(db, 'ledger')), {
+      uid: d.uid, type: 'bonus', amount: bonus,
+      note: 'অ্যাড মানি বোনাস (' + d.method + ')', createdAt: serverTimestamp()
+    });
+  }
+  await b.commit();
+  toast('ডিপোজিট অ্যাপ্রুভ হয়েছে' + (bonus ? ` (+${tk(bonus)} বোনাস)` : ''), 'ok');
+}
+
+async function rejectDeposit(id) {
+  await updateDoc(doc(db, 'deposits', id), { status: 'rejected' });
+  toast('ডিপোজিট বাতিল করা হয়েছে');
+}
+
+async function completeOrder(id) {
+  const o = S.orders.find(x => x.id === id);
+  if (!o || o.status !== 'pending') return;
+  const u = S.users.find(x => x.id === o.uid);
+  const b = writeBatch(db);
+  b.update(doc(db, 'orders', id), { status: 'done', doneAt: serverTimestamp() });
+
+  if (u && (o.type === 'recharge' || o.type === 'offer')) {
+    let cb = 0;
+    const now = Date.now();
+    S.camps.filter(c => c.type === 'recharge' && c.active !== false).forEach(c => {
+      if (c.startAt && Date.parse(c.startAt) > now) return;
+      if (c.endAt && Date.parse(c.endAt) < now) return;
+      if (c.minAmount && o.amount < Number(c.minAmount)) return;
+      let val = c.valueType === 'fixed' ? Number(c.value) : Math.floor(o.amount * Number(c.value) / 100);
+      if (c.maxBonus) val = Math.min(val, Number(c.maxBonus));
+      if (val > cb) cb = val;
+    });
+    if (cb > 0) {
+      b.update(doc(db, 'users', u.id), { bonus: increment(cb) });
+      b.set(doc(collection(db, 'ledger')), {
+        uid: u.id, type: 'cashback', amount: cb, note: 'রিচার্জ ক্যাশব্যাক', createdAt: serverTimestamp()
+      });
+    }
+    const refPct = Number(S.cfg.refCommissionPercent) || 0;
+    if (u.refBy && refPct > 0) {
+      const referrer = S.users.find(x => x.refCode === u.refBy);
+      const comm = Math.floor((o.amount * refPct) / 100);
+      if (referrer && comm > 0) {
+        b.update(doc(db, 'users', referrer.id), { balance: increment(comm) });
+        b.set(doc(collection(db, 'ledger')), {
+          uid: referrer.id, type: 'referral', amount: comm,
+          note: 'রেফার কমিশন (' + (u.name || '') + ')', createdAt: serverTimestamp()
+        });
+      }
+    }
+  }
+  await b.commit();
+  toast('অর্ডার সফল (Done) করা হয়েছে', 'ok');
+}
+
+async function rejectOrder(id) {
+  const o = S.orders.find(x => x.id === id);
+  if (!o || o.status !== 'pending') return;
+  const b = writeBatch(db);
+  b.update(doc(db, 'orders', id), { status: 'rejected' });
+  const refMain = Number(o.paidMain || 0);
+  const refBonus = Number(o.paidBonus || 0);
+  const fallback = (!refMain && !refBonus) ? Number(o.total || o.amount || 0) : 0;
+  b.update(doc(db, 'users', o.uid), {
+    balance: increment(refMain + fallback),
+    ...(refBonus > 0 ? { bonus: increment(refBonus) } : {})
+  });
+  b.set(doc(collection(db, 'ledger')), {
+    uid: o.uid, type: 'refund', amount: refMain + refBonus + fallback,
+    note: 'অর্ডার বাতিল রিফান্ড: ' + (o.title || o.type), createdAt: serverTimestamp()
+  });
+  await b.commit();
+  toast('অর্ডার বাতিল করে টাকা রিফান্ড দেওয়া হয়েছে', 'ok');
+}
+
+/* ---------- Views ---------- */
+function vLogin() {
+  return `<div class="auth-box"><div class="card" style="padding:24px">
+    <h2 style="margin:0 0 4px;color:var(--p)">অ্যাডমিন প্যানেল লগইন</h2>
+    <p style="margin:0 0 18px;color:var(--muted);font-size:13.5px">আপনার অ্যাডমিন ইমেইল ও পাসওয়ার্ড দিয়ে প্রবেশ করুন</p>
+    <form id="loginForm">
+      <div class="field"><label>অ্যাডমিন ইমেইল</label><input class="inp mono" name="email" type="email" value="${esc(ADMIN_EMAIL)}" required></div>
+      <div class="field"><label>পাসওয়ার্ড</label><input class="inp" name="pass" type="password" placeholder="••••••" required></div>
+      <button class="btn full" type="submit">লগইন করুন</button>
+    </form>
+  </div></div>`;
+}
+
+function vDash() {
+  const pOrd = S.orders.filter(x => x.status === 'pending');
+  const pDep = S.deposits.filter(x => x.status === 'pending');
+  const totBal = S.users.reduce((s, u) => s + (Number(u.balance) || 0), 0);
+  return `<div class="stats">
+    <div class="stat" onclick="setTab('orders')"><b>${pOrd.length}</b><span>পেন্ডিং অর্ডার</span></div>
+    <div class="stat" onclick="setTab('deposits')"><b>${pDep.length}</b><span>পেন্ডিং অ্যাড মানি</span></div>
+    <div class="stat" onclick="setTab('users')"><b>${S.users.length}</b><span>মোট ইউজার</span></div>
+    <div class="stat"><b>${tk(totBal)}</b><span>ইউজারদের মোট ব্যালেন্স</span></div>
+  </div>
+  <h3 style="margin:14px 0 8px">সাম্প্রতিক পেন্ডিং রিকোয়েস্ট</h3>
+  ${pDep.slice(0, 3).map(d => depCard(d)).join('')}
+  ${pOrd.slice(0, 5).map(o => ordCard(o)).join('')}
+  ${!pDep.length && !pOrd.length ? '<div class="card" style="text-align:center;color:var(--muted);padding:30px">কোনো পেন্ডিং রিকোয়েস্ট নেই 🎉</div>' : ''}`;
+}
+
+function ordCard(o) {
+  const u = S.users.find(x => x.id === o.uid) || {};
+  return `<div class="card">
+    <div class="row">
+      <div>
+        <b>${esc(o.title || o.type)}</b> <span class="tag ${o.status}">${o.status}</span>
+        <div class="mono" style="font-size:15px;font-weight:700;color:var(--p);margin:3px 0" onclick="copyText('${esc(o.number || '')}')">📞 ${esc(o.number || '-')} 📋</div>
+        <div style="font-size:12.5px;color:var(--muted)">ইউজার: ${esc(u.name || 'N/A')} (${esc(u.phone || '')}) • ${fmtDate(o.createdAt)}</div>
+        ${o.method ? `<div style="font-size:12.5px">মাধ্যম: <b>${esc(o.method)}</b></div>` : ''}
+        ${o.sub ? `<div style="font-size:12.5px">ধরন: ${esc(o.sub)}</div>` : ''}
+        ${o.note ? `<div style="font-size:12.5px;color:var(--warn)">নোট: ${esc(o.note)}</div>` : ''}
+      </div>
+      <div style="text-align:right">
+        <b class="mono" style="font-size:17px">${tk(o.total || o.amount)}</b>
+        ${o.fee ? `<div style="font-size:11px;color:var(--muted)">ফি: ${tk(o.fee)}</div>` : ''}
+      </div>
+    </div>
+    ${o.status === 'pending' ? `<div class="btns">
+      <button class="btn ok" onclick="completeOrder('${o.id}')">✓ Done (সফল)</button>
+      <button class="btn bad" onclick="rejectOrder('${o.id}')">✕ Reject & রিফান্ড</button>
+    </div>` : ''}
+  </div>`;
+}
+
+function depCard(d) {
+  const u = S.users.find(x => x.id === d.uid) || {};
+  return `<div class="card">
+    <div class="row">
+      <div>
+        <b>অ্যাড মানি (${esc(d.method)})</b> <span class="tag ${d.status}">${d.status}</span>
+        <div class="mono" style="font-size:14px;font-weight:700;margin:3px 0" onclick="copyText('${esc(d.trxId || '')}')">TrxID: ${esc(d.trxId || '')} 📋</div>
+        <div style="font-size:12.5px;color:var(--muted)">প্রেরক: ${esc(d.from || '')} • ইউজার: ${esc(u.name || '')} (${esc(u.phone || '')})</div>
+        <div style="font-size:12px;color:var(--muted)">${fmtDate(d.createdAt)}</div>
+      </div>
+      <b class="mono" style="font-size:18px;color:var(--ok)">+${tk(d.amount)}</b>
+    </div>
+    ${d.status === 'pending' ? `<div class="btns">
+      <button class="btn ok" onclick="approveDeposit('${d.id}')">✓ Approve (ব্যালেন্স দিন)</button>
+      <button class="btn bad" onclick="rejectDeposit('${d.id}')">✕ Reject</button>
+    </div>` : ''}
+  </div>`;
+}
+
+function vOrders() {
+  const list = S.orders.filter(x => S.orderFilter === 'all' || x.status === S.orderFilter);
+  return `<div class="tabs">
+    ${[['pending', 'পেন্ডিং'], ['done', 'সফল'], ['rejected', 'বাতিল'], ['all', 'সব']].map(t => `<button class="tab ${S.orderFilter === t[0] ? 'on' : ''}" onclick="S.orderFilter='${t[0]}';render()">${t[1]}</button>`).join('')}
+  </div>${list.length ? list.map(ordCard).join('') : '<div class="card" style="text-align:center;color:var(--muted)">কোনো অর্ডার নেই</div>'}`;
+}
+
+function vDeposits() {
+  const list = S.deposits.filter(x => S.depFilter === 'all' || x.status === S.depFilter);
+  return `<div class="tabs">
+    ${[['pending', 'পেন্ডিং'], ['done', 'অ্যাপ্রুভড'], ['rejected', 'বাতিল'], ['all', 'সব']].map(t => `<button class="tab ${S.depFilter === t[0] ? 'on' : ''}" onclick="S.depFilter='${t[0]}';render()">${t[1]}</button>`).join('')}
+  </div>${list.length ? list.map(depCard).join('') : '<div class="card" style="text-align:center;color:var(--muted)">কোনো ডিপোজিট নেই</div>'}`;
+}
+
+function vCatalog() {
+  return `<div class="card">
+    <div class="row" style="align-items:center;margin-bottom:10px"><b>সিম অপারেটরসমূহ (${S.ops.length})</b><button class="btn" onclick="modalOp()">+ অপারেটর</button></div>
+    ${S.ops.map(o => `<div class="sw-row"><div><b>${esc(o.name)}</b> <small style="color:var(--muted)">(${esc(o.short || '')})</small></div><div style="display:flex;gap:6px"><button class="btn ghost" style="padding:5px 10px" onclick="modalOp('${o.id}')">এডিট</button><button class="btn bad" style="padding:5px 10px" onclick="delDoc('operators','${o.id}')">ডিলিট</button></div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center;margin-bottom:10px"><b>ড্রাইভ অফারসমূহ (${S.offers.length})</b><button class="btn" onclick="modalOffer()">+ নতুন অফার</button></div>
+    ${S.offers.map(of => {
+      const op = S.ops.find(x => x.id === of.operatorId) || {};
+      return `<div class="sw-row"><div><b>${esc(of.title)}</b><div style="font-size:12px;color:var(--muted)">${esc(op.name || '')} • ${esc(of.category)} • ${tk(of.price)} (রেগুলার ${tk(of.regularPrice)})</div></div><div style="display:flex;gap:6px"><button class="btn ghost" style="padding:5px 10px" onclick="modalOffer('${of.id}')">এডিট</button><button class="btn bad" style="padding:5px 10px" onclick="delDoc('offers','${of.id}')">ডিলিট</button></div></div>`;
+    }).join('')}
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center;margin-bottom:10px"><b>হোম ব্যানার স্লাইডার (${S.banners.length})</b><button class="btn" onclick="modalBanner()">+ ব্যানার</button></div>
+    ${S.banners.map(b => `<div class="sw-row"><div><b>${esc(b.title || 'Image Banner')}</b><div style="font-size:12px;color:var(--muted)">${esc(b.subtitle || b.imageUrl || '')}</div></div><button class="btn bad" style="padding:5px 10px" onclick="delDoc('banners','${b.id}')">ডিলিট</button></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="row" style="align-items:center;margin-bottom:10px"><b>বোনাস ক্যাম্পেইন (${S.camps.length})</b><button class="btn" onclick="modalCamp()">+ ক্যাম্পেইন</button></div>
+    ${S.camps.map(c => `<div class="sw-row"><div><b>${esc(c.name)}</b><div style="font-size:12px;color:var(--muted)">${c.type === 'deposit' ? 'অ্যাড মানি' : 'রিচার্জ'} • ${c.value}${c.valueType === 'fixed' ? '৳' : '%'} বোনাস</div></div><button class="btn bad" style="padding:5px 10px" onclick="delDoc('campaigns','${c.id}')">ডিলিট</button></div>`).join('')}
+  </div>`;
+}
+
+function vUsers() {
+  const q = S.userSearch.toLowerCase();
+  const list = S.users.filter(u => !q || (u.name || '').toLowerCase().includes(q) || (u.phone || '').includes(q));
+  return `<div class="field"><input class="inp" placeholder="নাম বা মোবাইল নম্বর দিয়ে খুঁজুন..." value="${esc(S.userSearch)}" oninput="S.userSearch=this.value;render()"></div>
+  ${list.map(u => `<div class="card">
+    <div class="row">
+      <div><b>${esc(u.name)}</b> ${u.blocked ? '<span class="tag rejected">Blocked</span>' : ''}
+        <div class="mono" style="font-size:13px;color:var(--muted)">${esc(u.phone)} • Ref: ${esc(u.refCode || '')}</div>
+      </div>
+      <div style="text-align:right">
+        <b class="mono" style="color:var(--p)">${tk(u.balance)}</b>
+        <div style="font-size:12px;color:var(--ok)">বোনাস: ${tk(u.bonus)}</div>
+      </div>
+    </div>
+    <div class="btns">
+      <button class="btn ghost" onclick="modalUserBal('${u.id}')">ব্যালেন্স অ্যাড/কাটুন</button>
+      <button class="btn ${u.blocked ? 'ok' : 'bad'}" onclick="updateDocById('users','${u.id}',{blocked:${!u.blocked}})">${u.blocked ? 'Unblock' : 'Block'}</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+function vSettings() {
+  const c = S.cfg;
+  const f = (k, lbl, ph = '') => `<div class="field"><label>${lbl}</label><input class="inp" data-cfg="${k}" value="${esc(c[k] ?? '')}" placeholder="${ph}"></div>`;
+  return `<div class="card">
+    <h3 style="margin:0 0 12px">সাইট ব্র্যান্ডিং ও নোটিশ</h3>
+    ${f('siteName', 'সাইটের নাম', 'MyTelecom')}
+    ${f('tagline', 'ট্যাগলাইন', 'রিচার্জ • অফার • আর্ন')}
+    ${f('logoUrl', 'লোগো ইমেজ লিংক (URL)')}
+    <div class="grid2">${f('primaryColor', 'প্রাইমারি কালার', '#e5126f')}${f('secondaryColor', 'সেকেন্ডারি কালার', '#ff4d94')}</div>
+    ${f('noticeText', 'হোমপেজ নোটিশ টেক্সট')}
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 12px">পেমেন্ট নম্বরসমূহ (অ্যাড মানি)</h3>
+    ${f('payBkash', 'বিকাশ পার্সোনাল নম্বর', '017XXXXXXXX')}
+    ${f('payNagad', 'নগদ পার্সোনাল নম্বর', '018XXXXXXXX')}
+    ${f('payRocket', 'রকেট পার্সোনাল নম্বর', '019XXXXXXXX')}
+    ${f('payBank', 'ব্যাংক অ্যাকাউন্ট তথ্য')}
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 12px">লিমিট, ফি ও কমিশন</h3>
+    <div class="grid2">
+      ${f('minDeposit', 'সর্বনিম্ন অ্যাড মানি (৳)', '50')}
+      ${f('minRecharge', 'সর্বনিম্ন রিচার্জ (৳)', '10')}
+      ${f('minSend', 'সর্বনিম্ন সেন্ড মানি (৳)', '50')}
+      ${f('minCash', 'সর্বনিম্ন ক্যাশ আউট (৳)', '100')}
+      ${f('sendFeePercent', 'সেন্ড মানি ফি (%)', '1.5')}
+      ${f('cashFeePercent', 'ক্যাশ আউট ফি (%)', '1.85')}
+      ${f('signupBonus', 'সাইনআপ বোনাস (৳)', '0')}
+      ${f('refCommissionPercent', 'রেফার কমিশন (%)', '1')}
+    </div>
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 12px">সাপোর্ট ও সোশ্যাল লিংক</h3>
+    ${f('linkWhatsapp', 'WhatsApp নম্বর বা লিংক')}
+    ${f('linkTelegram', 'Telegram লিংক')}
+    ${f('linkFacebook', 'Facebook পেজ লিংক')}
+    ${f('supportPhone', 'সাপোর্ট কল নম্বর')}
+    ${f('supportText', 'সাপোর্ট পেজ মেসেজ')}
+    <div class="sw-row"><b>মেইনটেন্যান্স মোড (সাইট সাময়িক বন্ধ)</b><input type="checkbox" id="mntChk" ${c.maintenance ? 'checked' : ''} style="width:20px;height:20px"></div>
+  </div>
+  <button class="btn full" onclick="saveSettings()">সব সেটিংস সেভ করুন</button>`;
+}
+
+/* ---------- Modals ---------- */
+window.modalOp = (id = '') => {
+  const o = S.ops.find(x => x.id === id) || {};
+  const s = openSheet(`<h3>${id ? 'অপারেটর এডিট' : 'নতুন অপারেটর'}</h3>
+    <div class="field"><label>নাম (যেমন: Grameenphone)</label><input class="inp" id="opN" value="${esc(o.name || '')}"></div>
+    <div class="field"><label>সংক্ষিপ্ত নাম (যেমন: GP)</label><input class="inp" id="opS" value="${esc(o.short || '')}"></div>
+    <div class="field"><label>লোগো URL (ঐচ্ছিক)</label><input class="inp" id="opL" value="${esc(o.logo || '')}"></div>
+    <div class="field"><label>কালার কোড</label><input class="inp" id="opC" value="${esc(o.color || '#0ea5e9')}"></div>
+    <button class="btn full" id="opSave">সেভ করুন</button>`);
+  $('#opSave', s.el).onclick = async () => {
+    const data = { name: $('#opN', s.el).value.trim(), short: $('#opS', s.el).value.trim(), logo: $('#opL', s.el).value.trim(), color: $('#opC', s.el).value.trim(), active: true };
+    if (!data.name) return toast('নাম দিন', 'err');
+    if (id) await updateDoc(doc(db, 'operators', id), data); else await addDoc(collection(db, 'operators'), data);
+    s.close(); toast('সেভ হয়েছে', 'ok');
+  };
+};
+
+window.modalOffer = (id = '') => {
+  const of = S.offers.find(x => x.id === id) || {};
+  const s = openSheet(`<h3>${id ? 'অফার এডিট' : 'নতুন ড্রাইভ অফার'}</h3>
+    <div class="field"><label>অপারেটর</label><select class="inp" id="ofOp">${S.ops.map(o => `<option value="${o.id}" ${o.id === of.operatorId ? 'selected' : ''}>${esc(o.name)}</option>`).join('')}</select></div>
+    <div class="field"><label>ক্যাটাগরি</label><select class="inp" id="ofCat"><option value="internet" ${of.category === 'internet' ? 'selected' : ''}>ইন্টারনেট</option><option value="minute" ${of.category === 'minute' ? 'selected' : ''}>মিনিট</option><option value="bundle" ${of.category === 'bundle' ? 'selected' : ''}>বান্ডেল</option></select></div>
+    <div class="field"><label>অফার টাইটেল (যেমন: 30GB + 500 Min)</label><input class="inp" id="ofT" value="${esc(of.title || '')}"></div>
+    <div class="grid2">
+      <div class="field"><label>অফার মূল্য (৳)</label><input class="inp" id="ofP" type="number" value="${esc(of.price || '')}"></div>
+      <div class="field"><label>রেগুলার মূল্য (৳)</label><input class="inp" id="ofR" type="number" value="${esc(of.regularPrice || '')}"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>মেয়াদ (যেমন: 30 Days)</label><input class="inp" id="ofV" value="${esc(of.validityLabel || '30 Days')}"></div>
+      <div class="field"><label>ব্যাজ ট্যাগ (যেমন: Hot)</label><input class="inp" id="ofG" value="${esc(of.tag || '')}"></div>
+    </div>
+    <div class="field"><label>নোট (যেমন: সারা বাংলাদেশ)</label><input class="inp" id="ofN" value="${esc(of.note || '')}"></div>
+    <button class="btn full" id="ofSave">অফার সেভ করুন</button>`);
+  $('#ofSave', s.el).onclick = async () => {
+    const data = {
+      operatorId: $('#ofOp', s.el).value, category: $('#ofCat', s.el).value,
+      title: $('#ofT', s.el).value.trim(), price: Number($('#ofP', s.el).value),
+      regularPrice: Number($('#ofR', s.el).value) || 0, validityLabel: $('#ofV', s.el).value.trim(),
+      tag: $('#ofG', s.el).value.trim(), note: $('#ofN', s.el).value.trim(), active: true
+    };
+    if (!data.title || !data.price) return toast('টাইটেল ও মূল্য দিন', 'err');
+    if (id) await updateDoc(doc(db, 'offers', id), data); else await addDoc(collection(db, 'offers'), data);
+    s.close(); toast('অফার সেভ হয়েছে', 'ok');
+  };
+};
+
+window.modalBanner = () => {
+  const s = openSheet(`<h3>নতুন ব্যানার যোগ করুন</h3>
+    <div class="field"><label>ব্যানার ইমেজ URL (ফাঁকা রাখলে টেক্সট ব্যানার হবে)</label><input class="inp" id="bImg" placeholder="https://..."></div>
+    <div class="field"><label>টাইটেল</label><input class="inp" id="bT" placeholder="ধামাকা রিচার্জ অফার!"></div>
+    <div class="field"><label>সাবটাইটেল</label><input class="inp" id="bS" placeholder="সব সিমে সর্বোচ্চ ক্যাশব্যাক"></div>
+    <div class="field"><label>বাটন টেক্সট</label><input class="inp" id="bB" value="অফার দেখুন"></div>
+    <div class="field"><label>ক্লিক করলে কোথায় যাবে?</label><select class="inp" id="bL"><option value="offers">অফার পেজ</option><option value="deposit">অ্যাড মানি</option><option value="recharge">রিচার্জ</option><option value="refer">রেফার</option></select></div>
+    <button class="btn full" id="bSave">ব্যানার সেভ করুন</button>`);
+  $('#bSave', s.el).onclick = async () => {
+    await addDoc(collection(db, 'banners'), {
+      imageUrl: $('#bImg', s.el).value.trim(), title: $('#bT', s.el).value.trim(),
+      subtitle: $('#bS', s.el).value.trim(), buttonText: $('#bB', s.el).value.trim(),
+      linkType: $('#bL', s.el).value, active: true
+    });
+    s.close(); toast('ব্যানার যোগ হয়েছে', 'ok');
+  };
+};
+
+window.modalCamp = () => {
+  const s = openSheet(`<h3>নতুন বোনাস ক্যাম্পেইন</h3>
+    <div class="field"><label>ক্যাম্পেইনের নাম</label><input class="inp" id="cN" placeholder="অ্যাড মানি বোনাস"></div>
+    <div class="field"><label>ধরন</label><select class="inp" id="cT"><option value="deposit">অ্যাড মানি বোনাস</option><option value="recharge">রিচার্জ ক্যাশব্যাক</option></select></div>
+    <div class="grid2">
+      <div class="field"><label>বোনাস টাইপ</label><select class="inp" id="cVT"><option value="percent">শতাংশ (%)</option><option value="fixed">নির্দিষ্ট টাকা (৳)</option></select></div>
+      <div class="field"><label>পরিমাণ</label><input class="inp" id="cV" type="number" placeholder="5"></div>
+    </div>
+    <div class="field"><label>সর্বনিম্ন লেনদেন (৳)</label><input class="inp" id="cM" type="number" value="100"></div>
+    <button class="btn full" id="cSave">ক্যাম্পেইন চালু করুন</button>`);
+  $('#cSave', s.el).onclick = async () => {
+    await addDoc(collection(db, 'campaigns'), {
+      name: $('#cN', s.el).value.trim(), type: $('#cT', s.el).value,
+      valueType: $('#cVT', s.el).value, value: Number($('#cV', s.el).value),
+      minAmount: Number($('#cM', s.el).value) || 0, active: true
+    });
+    s.close(); toast('ক্যাম্পেইন চালু হয়েছে', 'ok');
+  };
+};
+
+window.modalUserBal = uid => {
+  const u = S.users.find(x => x.id === uid);
+  const s = openSheet(`<h3>${esc(u.name)} - ব্যালেন্স পরিবর্তন</h3>
+    <p style="color:var(--muted)">বর্তমান মেইন: <b>${tk(u.balance)}</b> | বোনাস: <b>${tk(u.bonus)}</b></p>
+    <div class="field"><label>ওয়ালেট</label><select class="inp" id="ubW"><option value="balance">মেইন ব্যালেন্স</option><option value="bonus">বোনাস ওয়ালেট</option></select></div>
+    <div class="field"><label>অ্যাকশন</label><select class="inp" id="ubA"><option value="1">যোগ করুন (+)</option><option value="-1">কেটে নিন (-)</option></select></div>
+    <div class="field"><label>টাকার পরিমাণ</label><input class="inp" id="ubAmt" type="number" placeholder="100"></div>
+    <div class="field"><label>কারণ / নোট</label><input class="inp" id="ubN" value="Admin Adjustment"></div>
+    <button class="btn full" id="ubSave">আপডেট করুন</button>`);
+  $('#ubSave', s.el).onclick = async () => {
+    const amt = Number($('#ubAmt', s.el).value) * Number($('#ubA', s.el).value);
+    const w = $('#ubW', s.el).value;
+    if (!amt) return toast('পরিমাণ দিন', 'err');
+    const b = writeBatch(db);
+    b.update(doc(db, 'users', uid), { [w]: increment(amt) });
+    b.set(doc(collection(db, 'ledger')), { uid, type: 'adjust', amount: amt, note: $('#ubN', s.el).value.trim(), createdAt: serverTimestamp() });
+    await b.commit();
+    s.close(); toast('ব্যালেন্স আপডেট হয়েছে', 'ok');
+  };
+};
+
+window.saveSettings = async () => {
+  const data = { ...S.cfg };
+  document.querySelectorAll('[data-cfg]').forEach(el => {
+    const k = el.dataset.cfg;
+    const v = el.value.trim();
+    data[k] = ['minDeposit','minRecharge','minSend','minCash','sendFeePercent','cashFeePercent','signupBonus','refCommissionPercent'].includes(k) ? (Number(v) || 0) : v;
+  });
+  data.maintenance = $('#mntChk').checked;
+  await setDoc(doc(db, 'settings', 'app'), data, { merge: true });
+  toast('সব সেটিংস সেভ হয়েছে!', 'ok');
+};
+
+window.delDoc = async (col, id) => { if (confirm('নিশ্চিত ডিলিট করবেন?')) { await deleteDoc(doc(db, col, id)); toast('ডিলিট হয়েছে'); } };
+window.updateDocById = async (col, id, data) => { await updateDoc(doc(db, col, id), data); toast('আপডেট হয়েছে', 'ok'); };
+window.setTab = t => { S.tab = t; render(); };
+window.approveDeposit = approveDeposit; window.rejectDeposit = rejectDeposit;
+window.completeOrder = completeOrder; window.rejectOrder = rejectOrder;
+window.copyText = copyText; window.render = render;
+
+function render() {
+  const root = $('#app');
+  if (!isConfigured) { root.innerHTML = `<div class="pad"><div class="card"><h3>Firebase Config বসান</h3><p>কোডের ভেতরে <b>FIREBASE_CONFIG</b> এবং <b>ADMIN_EMAIL</b> বসান।</p></div></div>`; return; }
+  if (!S.ready) { root.innerHTML = `<div class="pad" style="text-align:center;padding-top:60px">লোড হচ্ছে...</div>`; return; }
+  if (!S.user || S.user.email !== ADMIN_EMAIL) {
+    root.innerHTML = vLogin();
+    $('#loginForm').onsubmit = async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try {
+        const res = await signInWithEmailAndPassword(auth, fd.get('email').trim(), fd.get('pass'));
+        if (res.user.email !== ADMIN_EMAIL) { await signOut(auth); toast('এটি অ্যাডমিন ইমেইল নয়!', 'err'); }
+      } catch (er) { toast('ইমেইল বা পাসওয়ার্ড ভুল!', 'err'); }
+    };
+    return;
+  }
+
+  const pOrd = S.orders.filter(x => x.status === 'pending').length;
+  const pDep = S.deposits.filter(x => x.status === 'pending').length;
+  const views = { dash: vDash, orders: vOrders, deposits: vDeposits, catalog: vCatalog, users: vUsers, settings: vSettings };
+
+  root.innerHTML = `<div class="top">
+    <h1>অ্যাডমিন প্যানেল</h1>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="badge-pill" onclick="setTab('settings')">⚙️ সেটিংস</button>
+      <button class="badge-pill" onclick="logoutAdmin()">লগআউট</button>
+    </div>
+  </div>
+  <div class="pad">${(views[S.tab] || vDash)()}</div>
+  <nav class="nav">
+    <button class="${S.tab === 'dash' ? 'on' : ''}" onclick="setTab('dash')"><span>📊</span>ড্যাশবোর্ড</button>
+    <button class="${S.tab === 'orders' ? 'on' : ''}" onclick="setTab('orders')"><span>📱</span>অর্ডার${pOrd ? `<i class="dot">${pOrd}</i>` : ''}</button>
+    <button class="${S.tab === 'deposits' ? 'on' : ''}" onclick="setTab('deposits')"><span>💰</span>অ্যাড মানি${pDep ? `<i class="dot">${pDep}</i>` : ''}</button>
+    <button class="${S.tab === 'catalog' ? 'on' : ''}" onclick="setTab('catalog')"><span>🎁</span>অফার/ব্যানার</button>
+    <button class="${S.tab === 'users' ? 'on' : ''}" onclick="setTab('users')"><span>👥</span>ইউজার</button>
+  </nav>`;
+}
+
+window.logoutAdmin = () => signOut(auth);
+
+if (isConfigured) {
+  onAuthStateChanged(auth, u => {
+    S.user = u;
+    S.ready = true;
+    if (u && u.email === ADMIN_EMAIL) listenAll();
+    render();
+  });
+} else { render(); }
+</script>
+</body>
+  </html>
